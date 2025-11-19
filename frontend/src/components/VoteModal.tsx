@@ -226,7 +226,3 @@ export const useVoting = () => {
     getPollById,
   };
 };
-
-function getPollCounterPDA(PROGRAM_ID: PublicKey): [any] {
-  throw new Error('Function not implemented.');
-}
