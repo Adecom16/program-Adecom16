@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
-import { useWallet } from '@solana/wallet-adapter-react';
+import { useState } from 'react';
+import { useWallet, useConnection } from '@solana/wallet-adapter-react';
+import { PublicKey, SystemProgram } from '@solana/web3.js';
 import * as anchor from '@coral-xyz/anchor';
-import { useVoting } from '../hooks/useVoting';
-import VoteModal from './VoteModal';
+import { getProgram, getVoteRecordPDA, PROGRAM_ID } from '../utils/anchor';
 
 interface PollCardProps {
   pollPubkey: string;
@@ -38,10 +38,10 @@ export default function PollCard({ pollPubkey, poll, onUpdate }: PollCardProps) 
 
     try {
       const program = getProgram(wallet as any, connection);
-      const pollPubkey = new PublicKey(pollPubkey);
+      const pollPubkeyObj = new PublicKey(pollPubkey);
       
       const [voteRecordPda] = getVoteRecordPDA(
-        pollPubkey,
+        pollPubkeyObj,
         wallet.publicKey,
         PROGRAM_ID
       );
@@ -49,7 +49,7 @@ export default function PollCard({ pollPubkey, poll, onUpdate }: PollCardProps) 
       const tx = await program.methods
         .vote(new anchor.BN(pollId), optionIndex)
         .accounts({
-          poll: pollPubkey,
+          poll: pollPubkeyObj,
           voteRecord: voteRecordPda,
           voter: wallet.publicKey,
           systemProgram: SystemProgram.programId,

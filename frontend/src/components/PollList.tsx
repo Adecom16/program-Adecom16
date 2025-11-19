@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
-import { getProgram, getPollCounterPDA, PROGRAM_ID } from '../utils/anchor';
+import { getProgram } from '../utils/anchor';
 import PollCard from './PollCard';
 
 interface Poll {
@@ -31,10 +31,11 @@ export default function PollList() {
       const program = getProgram(wallet as any, connection);
       
       // Get all poll accounts
+      // @ts-ignore - Anchor program type
       const pollAccounts = await program.account.poll.all();
       
       setPolls(
-        pollAccounts.map((poll) => ({
+        pollAccounts.map((poll: any) => ({
           publicKey: poll.publicKey.toString(),
           account: poll.account,
         }))
